@@ -25,9 +25,12 @@ namespace TesteUri
             PropriedadesBooleanas();
             MakeRelativeUri();
             GetLeftPart();
+            CheckHostName();
+            CheckSchemeName();
+            DigitosHexadecimais();
 
             Console.ReadLine();
-        }
+        }        
 
         static void ExtraindoInfo()
         {
@@ -127,6 +130,65 @@ namespace TesteUri
             Console.WriteLine(uri.GetLeftPart(UriPartial.Authority));
             Console.WriteLine(uri.GetLeftPart(UriPartial.Path));
             Console.WriteLine(uri.GetLeftPart(UriPartial.Query));
+        }
+
+        static void CheckHostName()
+        {
+            // CheckHostName(): método estático que determina se o nome do host especificado é um nome DNS válido. Este método retorna um valor da enumeração UriHostNameType que descreve o tipo de host detectado.
+            Console.WriteLine($"\n=== Testando método CheckHostName()\n");
+
+            Console.WriteLine($"www.macoratti.net: {Uri.CheckHostName("www.macoratti.net")}");
+            Console.WriteLine($"192.168.0.1: {Uri.CheckHostName("192.168.0.1")}");
+            Console.WriteLine($"2001:0DB8:AC10:FE01:: -> {Uri.CheckHostName("2001:0DB8:AC10:FE01::")}");
+            Console.WriteLine($"!: {Uri.CheckHostName("!")}");
+            Console.WriteLine($"localhost: {Uri.CheckHostName("localhost")}");
+            Console.WriteLine($"127.0.0.1: {Uri.CheckHostName("127.0.0.1")}");            
+        }
+
+        static void CheckSchemeName()
+        {
+            // Determina se o nome do esquema especificado é válido. Retorna true se o nome do esquema não contém caracteres inválidos (por padrão, a validação é feita de acordo com a RFC 2396).
+            Console.WriteLine($"\n=== Testando método CheckSchemeName()\n");
+
+            Console.WriteLine($"http: " + Uri.CheckSchemeName("http"));
+            Console.WriteLine($"invalido: " + Uri.CheckSchemeName("invalido"));
+        }
+
+        static void DigitosHexadecimais()
+        {
+            /* Existem limitações nos caracteres que podem ser usados ​​em URIs.
+             * Quando necessário o uso, pode-se codificá-los usando número hexadecimal prefixado com um símbolo de porcentagem (%).
+             * Para usar um e comercial (&), codifica-se como "%26". Exemplo: "?Query=teste%26demo".
+             */
+            Console.WriteLine($"\n=== Trabalhando com Números Hexadecimais\n");
+
+            string codificacao;
+            int valor = 0;
+            char caractere;
+
+            // HexEscape(): aceita um valor de caractere e retorna a string codificada.
+            codificacao = Uri.HexEscape('&');
+
+            /* HexUnescape(): requer dois parâmetros:
+             * O primeiro é uma seqüência de caracteres que contém um caractere codificado hexadecimal para decodificar.
+             * O segundo é um inteiro, passado por referência, que especifica o índice do símbolo de porcentagem que inicia a seção codificada. Ele retorna um caractere decodificado.
+             */
+            caractere = Uri.HexUnescape(codificacao, ref valor);
+
+            Console.WriteLine("Codificando e decodificando caracteres:");
+            Console.WriteLine($"Resultado => {caractere} = {codificacao}");
+
+
+            // IsHexEnconding(): verifica se um ponto específico de uma cadeia representa um caractere codificado. Usa os mesmos parâmetros que HexDecode, exceto que a posição do índice é passada pelo valor. O método retorna true se o texto na posição dada for decodificável e false caso contrário.
+            Console.WriteLine("\nVerificando Codificação: ");
+            Console.WriteLine($"%26 => {Uri.IsHexEncoding("%26", 0)}");
+            Console.WriteLine($"Valor => {Uri.IsHexEncoding("Valor", 0)}");
+
+            Console.WriteLine("\nMétodos adicionais para trabalho com Hexadecimal: ");
+            // IsHexDigit(): verifica se um caractere contém um dígito hexadecimal (0-9 ou A-F).
+            Console.WriteLine($"FromHex('F') => " + Uri.FromHex('F'));
+            // FromHex(): converte um único dígito hexadecimal, fornecido como um caractere, ao seu inteiro equivalente;
+            Console.WriteLine($"Uri.IsHexDigit('F') => " + Uri.IsHexDigit('F'));
         }
     }
 }
